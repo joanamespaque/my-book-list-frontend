@@ -7,12 +7,11 @@ import Message from './Message';
 
 const List = styled.div`
   margin-top: 5vh;
-  display: flex;
-  flex-wrap: wrap;
-  // justify-content: center;
   width: 80vw;
   margin: 0 auto;
   padding: 30px;
+  display: flex;
+  flex-wrap: wrap;
 `;
 
 const BookList = ({ filter }) => {
@@ -35,12 +34,10 @@ const BookList = ({ filter }) => {
       <List>
           {
             data.items.map((book, key) =>
-              <div>
                 <BookCard
                   key={key}
                   book={book.volumeInfo}
                 ></BookCard>
-              </div>
             )
           }
       </List>

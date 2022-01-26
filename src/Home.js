@@ -29,7 +29,7 @@ const List = styled.div`
 
 const Home = ({ filter }) => {
   const [books, setBooks] = React.useState([]);
-  const [tab, setTab] = React.useState('');
+  const [tab, setTab] = React.useState(0);
   const { data, error, request } = useFetch();
 
   async function fetchBooks() {
@@ -38,9 +38,9 @@ const Home = ({ filter }) => {
     return json;
   }
   async function fetchFavoritesBooks() {
+    console.log('entrou')
     const { url, options } = BOOKS_LIST();
     const { json } = await request(url, options);
-    console.log(json);
     return json;
   }
 
@@ -48,22 +48,37 @@ const Home = ({ filter }) => {
     fetchBooks().then((response) => setBooks(response.items));
   }, [request]);
 
-  function handleChange({ target }) {
-    let result;
-    if (tab === 0) {
-      fetchBooks().then((response) => { result = response });
-    } else {
-      fetchFavoritesBooks().then((response) => { result = response });
-    }
+  async function handleChange({ target }) {
+    const result = await getBooks(tab);
     const search = target.value;
-    const filter = result.items.filter((book) => {  return book.volumeInfo.title.toLowerCase().indexOf(search.toLowerCase().trim()) !== -1 })
-    setBooks(filter);
+
+    setBooks(await filterBooks(search, result.items ? result.items : result));
+  }
+
+  async function getBooks (tab) {
+    if (tab === 0) {
+      return await fetchBooks();
+    } else {
+      return await fetchFavoritesBooks;
+    }
+  }
+
+  function filterBooks (value, books) {
+
+    return books.filter(({volumeInfo}) => {
+      const { title } = volumeInfo;
+      return normalize(title).includes(normalize(value));
+    })
+  }
+
+  function normalize (text) {
+    return text.toLowerCase().trim();
   }
 
   return (
       <Container>
       <SearchInput handleChange={handleChange}></SearchInput>
-      <FavoriteTabs setTabs={setTab}></FavoriteTabs>
+      <FavoriteTabs handleChangeTab={getBooks}></FavoriteTabs>
       { error && <Message error text="Nada encontrado" />}
       { data &&
         <List>

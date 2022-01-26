@@ -4,12 +4,12 @@ import Tab from '@mui/material/Tab';
 import { MenuBook } from '@styled-icons/material/MenuBook';
 import { Favorite } from '@styled-icons/material/Favorite';
 
-const FavoriteTabs = ({ setTabs }) => {
+const FavoriteTabs = ({ handleChangeTab }) => {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    setTabs(newValue);
+    handleChangeTab(newValue);
   };
 
   return <div>
