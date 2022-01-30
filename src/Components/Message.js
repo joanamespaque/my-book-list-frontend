@@ -4,11 +4,11 @@ import { SearchOff } from '@styled-icons/material/SearchOff'
 import { CheckCircleOutline } from '@styled-icons/material/CheckCircleOutline'
 
 const SuccessIcon = styled(CheckCircleOutline)`
-  color: ${props => props.theme.colors.success};
+  color: ${props => props.theme.colors.messages.success};
 `
 
 const ErrorIcon = styled(SearchOff)`
-  color:  ${props => props.theme.colors.error};
+  color:  ${props => props.theme.colors.messages.error};
 `
 
 const MessageDiv = styled.div`
@@ -24,7 +24,7 @@ const MessageDiv = styled.div`
 `;
 
 const ColorDiv = styled(MessageDiv)`
-  width: 10px;
+  width: 2px;
   height: 6vh;
   margin: 30px 0 30px 0;
   border-radius: 10px 0px 0px 10px;
@@ -60,15 +60,25 @@ const Container = styled.div`
 `;
 
 const Message = ({text, ...props}) => {
+  const [show, setShow] = React.useState(true);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setShow(false);
+    }, 5000);
+  });
+
   return (
-    <Container>
-      <ColorDiv {...props}></ColorDiv>
-      <MessageDiv >
-        {props.success && <SuccessIcon size="35"></SuccessIcon>}
-        {props.error && <ErrorIcon size="35"></ErrorIcon>}
-        <Text>{text}</Text>
-      </MessageDiv>
-    </Container>
+    show ? (
+    <Container className="animeLeft">
+        <ColorDiv {...props}></ColorDiv>
+        <MessageDiv >
+          {props.success && <SuccessIcon size="35"></SuccessIcon>}
+          {props.error && <ErrorIcon size="35"></ErrorIcon>}
+          <Text>{text}</Text>
+        </MessageDiv>
+      </Container>
+    ) : null
   );
 };
 

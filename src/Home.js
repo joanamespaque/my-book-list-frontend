@@ -17,16 +17,6 @@ const Container = styled.div`
 
 `;
 
-const List = styled.div`
-  margin-top: 5vh;
-  display: flex;
-  flex-wrap: wrap;
-  // justify-content: center;
-  width: 80vw;
-  margin: 0 auto;
-  padding: 30px;
-`;
-
 const Home = ({ filter }) => {
   const [books, setBooks] = React.useState([]);
   const [tab, setTab] = React.useState(0);
@@ -38,7 +28,6 @@ const Home = ({ filter }) => {
     return json;
   }
   async function fetchFavoritesBooks() {
-    console.log('entrou')
     const { url, options } = BOOKS_LIST();
     const { json } = await request(url, options);
     return json;
@@ -81,16 +70,7 @@ const Home = ({ filter }) => {
       <FavoriteTabs handleChangeTab={getBooks}></FavoriteTabs>
       { error && <Message error text="Nada encontrado" />}
       { data &&
-        <List>
-            {
-              books.map((book, key) =>
-                  <BookCard
-                    key={key}
-                    book={book.volumeInfo}
-                  ></BookCard>
-              )
-            }
-        </List>
+        <BookList books={books}></BookList>
       }
       </Container>
     );

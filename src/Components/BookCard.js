@@ -8,16 +8,19 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { FavoriteBorder } from '@styled-icons/material/FavoriteBorder';
-import { BOOK_POST } from '../Api';
 import useFetch from '../Hooks/useFetch';
-import Modal from './Modal';
+import FavoriteModal from './FavoriteModal';
 
 const StyledCard = styled(Card)`
   border-radius: 30px !important;
   box-shadow: none !important;
   box-shadow: 0.5px 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.1) !important;
   margin: 15px;
-  height: 380px !important;
+  height: 380px !important; 
+  @media(max-width: 500px) {
+    height: 53vh !important;
+  }
+
 `;
 const CardDiv = styled.div`
   cursor: pointer;
@@ -30,40 +33,18 @@ const CardDiv = styled.div`
 
 const BookCard = ({ book }) => {
   const [open, setOpen] = React.useState(false);
+  const [handleFavorite, setHandleFavorite] = React.useState(false);
   const [description, setDescription] = React.useState(false);
   const { data, error, request } = useFetch();
-  const handleOpen = () => {
-    setOpen(true);
-  };
 
-  async function postBook() {
-    const data = {
-      title: book.title,
-      description: book.description,
-      favorite_description: description,
-      book_id: book.id,
-      authors: book.authors,
-      publisher: book.publisher,
-      infoLink: book.infoLink,
-      categories: book.categories,
-      publishedDate: book.publishedDate,
-      pageCount: book.pageCount,
-      thumbnail: book.thumbnail
-    }
-    const { url, options } = BOOK_POST(data);
-    const { json } = await request(url, options);
-    return json;
-  }
-  function handleFavorite ({target}) {
-    
-  }
+  const handleShow = () => setOpen(true);
 
   return (
     <>
       { open &&
-        <Modal book={book} state={open}></Modal>
+        <FavoriteModal book={book} setOpen={setOpen} open={open} handleFavorite={handleFavorite}></FavoriteModal>
       }
-      <CardDiv onClick={handleOpen}>
+      <CardDiv onClick={handleShow}>
         <StyledCard sx={{ maxWidth: 345 }}>
         <CardMedia
           component="img"
@@ -80,10 +61,10 @@ const BookCard = ({ book }) => {
           </Typography>
         </CardContent>
         <CardActions>
-          <IconButton aria-label="add to favorites" onClick={handleFavorite} id={book.id}>
+          <IconButton aria-label="add to favorites" id={book.id} onClick={() => setHandleFavorite(true)}>
             <FavoriteBorder size="30" ></FavoriteBorder>
           </IconButton>
-          <Button size="small">Saber mais</Button>
+          <Button size="small" href={book.infoLink} target="_blank">Saber mais</Button>
         </CardActions>
       </StyledCard>
       </CardDiv>

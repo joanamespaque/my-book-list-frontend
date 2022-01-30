@@ -32,6 +32,10 @@ const Input = styled.input`
   @media(max-width: 900px) {
     width: 100% !important;
   }
+  @media(max-width: 500px) {
+    width: 120% !important;
+    margin-left: -22% !important;
+  }
 
 `;
 const Icon = styled.div`
