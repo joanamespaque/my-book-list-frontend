@@ -1,4 +1,4 @@
-export const API_URL = 'http://localhost:3333';
+export const API_URL = 'https://finpec-my-book-list.herokuapp.com';
 
 export function BOOK_POST(body) {
   return {
