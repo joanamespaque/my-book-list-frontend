@@ -21,7 +21,9 @@ const List = styled.div`
   }
 `;
 
-const BookList = ({ books }) => {
+const BookList = ({ books, favorites }) => {
+  let favorites_ids = [];
+  favorites.map((item) => favorites_ids.push(item.book_id ? item.book_id : item.id))
   return (
     <List>
       {
@@ -29,11 +31,14 @@ const BookList = ({ books }) => {
         books.map((book, key) =>
             <BookCard
               key={key}
-              book={book.volumeInfo}
+              book={book}
+              favorite={favorites_ids.includes(book.book_id ? book.book_id : book.id) ? true : false}
             ></BookCard>
         )
         :
+        books.length === 0 && (
         <Message error text="Nada encontrado"/>
+        )
       }
     </List>
 

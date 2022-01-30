@@ -10,6 +10,7 @@ const FavoriteTabs = ({ handleChangeTab }) => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     handleChangeTab(newValue);
+    console.log(newValue);
   };
 
   return <div>

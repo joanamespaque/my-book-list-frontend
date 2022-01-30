@@ -46,6 +46,12 @@ const ColorDiv = styled(MessageDiv)`
       background: ${props.theme.colors.messages.success}
     `
   }
+  ${(props) =>
+    props.info &&
+    css`
+      background: ${props.theme.colors.messages.info}
+    `
+  }
 `;
 
 const Text = styled.div`
@@ -75,6 +81,7 @@ const Message = ({text, ...props}) => {
         <MessageDiv >
           {props.success && <SuccessIcon size="35"></SuccessIcon>}
           {props.error && <ErrorIcon size="35"></ErrorIcon>}
+          {props.info && <ErrorIcon size="35"></ErrorIcon>}
           <Text>{text}</Text>
         </MessageDiv>
       </Container>

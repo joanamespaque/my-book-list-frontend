@@ -16,7 +16,7 @@ const Field = styled.textarea`
 
 `;
 const DescriptionField = ({ handleChange }) => {
-  return <Field rows="5" cols="33" onChange={handleChange} placeholder='Digite uma anotação...'></Field>;
+  return <Field rows="5" cols="33" onChange={handleChange} placeholder='Digite uma anotação...' maxLength={500}></Field>;
 };
 
 export default DescriptionField;

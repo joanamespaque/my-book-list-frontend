@@ -8,7 +8,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { FavoriteBorder } from '@styled-icons/material/FavoriteBorder';
-import useFetch from '../Hooks/useFetch';
+import { Favorite } from '@styled-icons/material/Favorite';
 import FavoriteModal from './FavoriteModal';
 
 const StyledCard = styled(Card)`
@@ -16,7 +16,7 @@ const StyledCard = styled(Card)`
   box-shadow: none !important;
   box-shadow: 0.5px 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.1) !important;
   margin: 15px;
-  height: 380px !important; 
+  height: 380px !important;
   @media(max-width: 500px) {
     height: 53vh !important;
   }
@@ -31,18 +31,15 @@ const CardDiv = styled.div`
   }
 `;
 
-const BookCard = ({ book }) => {
+const BookCard = ({ book, favorite }) => {
   const [open, setOpen] = React.useState(false);
   const [handleFavorite, setHandleFavorite] = React.useState(false);
-  const [description, setDescription] = React.useState(false);
-  const { data, error, request } = useFetch();
-
   const handleShow = () => setOpen(true);
 
   return (
     <>
       { open &&
-        <FavoriteModal book={book} setOpen={setOpen} open={open} handleFavorite={handleFavorite}></FavoriteModal>
+        <FavoriteModal book={book} setOpen={setOpen} open={open} handleFavorite={handleFavorite} favorite={favorite} setHandleFavorite={setHandleFavorite}></FavoriteModal>
       }
       <CardDiv onClick={handleShow}>
         <StyledCard sx={{ maxWidth: 345 }}>
@@ -50,7 +47,7 @@ const BookCard = ({ book }) => {
           component="img"
           alt="green iguana"
           height="140"
-          image={book.imageLinks.thumbnail}
+          image={book.imageLinks ? book.imageLinks.thumbnail : book.thumbnail}
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
@@ -62,7 +59,11 @@ const BookCard = ({ book }) => {
         </CardContent>
         <CardActions>
           <IconButton aria-label="add to favorites" id={book.id} onClick={() => setHandleFavorite(true)}>
-            <FavoriteBorder size="30" ></FavoriteBorder>
+            {favorite ?
+              <Favorite size="30" color='#EF9C17'></Favorite>
+              :
+              <FavoriteBorder size="30" ></FavoriteBorder>
+            }
           </IconButton>
           <Button size="small" href={book.infoLink} target="_blank">Saber mais</Button>
         </CardActions>

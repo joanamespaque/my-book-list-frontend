@@ -2,7 +2,7 @@ export const API_URL = 'http://localhost:3333';
 
 export function BOOK_POST(body) {
   return {
-    url: API_URL + '/api/user',
+    url: API_URL + '/favorite-books',
     options: {
       method: 'POST',
       headers: {

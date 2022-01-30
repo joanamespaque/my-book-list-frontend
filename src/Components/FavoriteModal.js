@@ -4,24 +4,12 @@ import styled, { css } from 'styled-components';
 import DescriptionField from './DescriptionField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { BOOK_POST } from '../Api';
 import useFetch from '../Hooks/useFetch';
 import { FavoriteBorder } from '@styled-icons/material/FavoriteBorder';
+import { Favorite } from '@styled-icons/material/Favorite';
 import { Info } from '@styled-icons/material/Info';
-// const style = {
-//   position: 'absolute',
-//   top: '50%',
-//   left: '50%',
-//   transform: 'translate(-50%, -50%)',
-//   width: 400,
-//   bgcolor: 'background.paper',
-//   border: '2px solid #000',
-//   boxShadow: 24,
-//   pt: 2,
-//   px: 4,
-//   pb: 3,
-// };
-
+import { BOOK_POST } from '../Api';
+import { BOOK_DELETE } from '../Api';
 
 const StyledModal = styled(ModalUnstyled)`
   position: fixed;
@@ -36,6 +24,7 @@ const StyledModal = styled(ModalUnstyled)`
 `;
 
 const StyledBox = styled(Box)`
+  min-width: 280px;
   max-height: 90vh;
   display: flex;
   flex-direction: row;
@@ -45,6 +34,12 @@ const StyledBox = styled(Box)`
   @media(max-width: 1215px) {
     flex-direction: column;
     overflow: scroll;
+  }
+  @media(max-width: 1300px) {
+    h2 {
+      font-size: 18px;
+      text-align: center;
+    }
   }
 `;
 
@@ -130,73 +125,133 @@ const ColorButton = styled(Button)`
       }
     `
   }
+  @media(max-width: 1250px) {
+    margin: 10px !important;
+  }
+  @media(max-width: 400px) {
+    width: 180px;
+  }
 `;
 
 const ButtonsDiv = styled.div`
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   margin-top: 30px;
+  @media(max-width: 1250px) {
+    flex-direction: column-reverse;
+    margin: 0 auto;
+  }
+`;
+const Note = styled.div`
+  padding: 20px 5px 10px 5px;
+  color: rgb(70, 70, 70, 0.8);
 `;
 
-const FavoriteModal = ({state, book, setOpen, open, handleFavorite}) => {
+const FavoriteModal = ({state, book, setOpen, open, handleFavorite, setHandleFavorite, favorite}) => {
   function ChildModal() {
-    const [open, setOpen] = React.useState(handleFavorite ? true : false);
+    const [openChild, setOpenChild] = React.useState(handleFavorite ? true : false);
     const [description, setDescription] = React.useState('');
     const { data, error, request } = useFetch();
-    const handleOpen = () => {
-      setOpen(true);
+
+    const handleOpenChild = () => {
+      setOpenChild(true);
     };
-    const handleClose = () => {
-      setOpen(false);
+    const handleCloseChild = () => {
+      setOpenChild(false);
+      setHandleFavorite(false);
     };
     const handleChange = ({ target }) => {
       setDescription(target.value);
     };
 
     async function handleSubmit () {
-      // const data = {
-      //   title: book.title,
-      //   book_description: description,
-      //   description: book.description,
-      //   favorite_description: description,
-      //   book_id: book.id,
-      //   authors: book.authors,
-      //   publisher: book.publisher,
-      //   infoLink: book.infoLink,
-      //   categories: book.categories,
-      //   publishedDate: book.publishedDate,
-      //   pageCount: book.pageCount,
-      //   thumbnail: book.thumbnail
-      // }
-      // const { url, options } = BOOK_POST(data);
-      // const { json } = await request(url, options);
-      // return json;
+      let authors = '';
+      if(book.authors) book.authors.map((author) => authors += author + ' ')
+      let categories = '';
+      if (book.cateogires) book.categories.map((category) =>  categories += category + ' ');
+      const data = {
+        title: book.title,
+        description: book.description,
+        favorite_description: description,
+        book_id: book.id,
+        authors: authors,
+        publisher: book.publisher,
+        infoLink: book.infoLink,
+        categories: categories,
+        pageCount: book.pageCount,
+        thumbnail: book.imageLinks.thumbnail
+      }
+      console.log(data);
+      console.log(book);
+      const { url, options } = BOOK_POST(data);
+      await request(url, options);
+      return window.location.reload();
+      ;
     }
+
+    async function handleRemove () {
+      const item = localStorage.getItem(book.book_id ? book.book_id : book.id);
+      console.log(book)
+      console.log(item)
+      await fetchDeleteBook(item);
+      return window.location.reload();
+      ;
+    }
+
+    async function fetchDeleteBook (id) {
+      const { url, options } = BOOK_DELETE(id);
+      const { json } = await request(url, options);
+      return json;
+    }
+
     return (
       <>
-        <ColorButton onClick={handleOpen} variant="contained" endIcon={<FavoriteBorder size="25" />}>
-          Favoritar
+        <ColorButton onClick={handleOpenChild} variant="contained" 
+        endIcon={
+          favorite ?
+          <Favorite size="25"/>
+          :
+          <FavoriteBorder size="25"/>
+        }>
+          {favorite ? "Favoritado" : "Favoritar"}
         </ColorButton>
         <StyledModal
           BackdropComponent={Backdrop}
-          open={open}
-          onClose={handleClose}
+          open={openChild}
+          onClose={handleCloseChild}
           aria-labelledby="child-modal-title"
           aria-describedby="child-modal-description"
+          className='animeLeft'
           >
-          <StyledBox sx={{p:5, display:'flex', flexDirection: 'column'}}>
-              <h2 id="child-modal-title">Favoritar Livro</h2>
-              <DescriptionField handleChange={handleChange}></DescriptionField>
-              <ButtonsDiv>
-                <ColorButton variant="contained" info="true" target="_blank" onClick={handleClose} outlined="true">
-                  Cancelar
-                </ColorButton>
-                <ColorButton variant="contained" info="true" target="_blank" onClick={handleSubmit}>
-                  Favoritar
-                </ColorButton>
-              </ButtonsDiv>
-          </StyledBox>
+          {favorite
+          ? (
+            <StyledBox sx={{p:5, display:'flex', flexDirection: 'column', width: '24vw'}}>
+                <h2 id="child-modal-title">Remover dos favoritos?</h2>
+                <ButtonsDiv>
+                  <ColorButton variant="contained" info="true" target="_blank" onClick={handleCloseChild} outlined="true">
+                    Cancelar
+                  </ColorButton>
+                  <ColorButton variant="contained" info="true" target="_blank" onClick={handleRemove}>
+                    Remover
+                  </ColorButton>
+                </ButtonsDiv>
+            </StyledBox>
+          )
+          : (
+            <StyledBox sx={{p:5, display:'flex', flexDirection: 'column'}}>
+                <h2 id="child-modal-title">Favoritar Livro</h2>
+                <DescriptionField handleChange={handleChange}></DescriptionField>
+                <ButtonsDiv>
+                  <ColorButton variant="contained" info="true" target="_blank" onClick={handleCloseChild} outlined="true">
+                    Cancelar
+                  </ColorButton>
+                  <ColorButton variant="contained" info="true" target="_blank" onClick={handleSubmit}>
+                    Favoritar
+                  </ColorButton>
+                </ButtonsDiv>
+            </StyledBox>
+          )
+          }
         </StyledModal>
       </>
     );
@@ -216,22 +271,33 @@ const FavoriteModal = ({state, book, setOpen, open, handleFavorite}) => {
       >
         <StyledBox sx={{ width: '60vw', outline: 'none'}}>
           <InfoContainer image>
-            <Image src={book.imageLinks.thumbnail}></Image>
+            <Image src={book.imageLinks ? book.imageLinks.thumbnail : book.thumbnail}></Image>
             <ChildModal />
             <ColorButton variant="contained" info="true" href={book.infoLink} target="_blank" endIcon={<Info size="25" />}>
               Saber Mais
             </ColorButton>
+            {favorite &&
+              <Note >
+                <span>Sua anotação: </span><p id="unstyled-modal-description">{book.favorite_description}</p>
+              </Note>
+            }
           </InfoContainer>
           <InfoContainer>
             <h2 id="unstyled-modal-title">{book.title}</h2>
             <p id="unstyled-modal-description">{book.description}</p>
             <StyledBox>
               <SubInfoContainer>
-                <span>Autores: </span><p id="unstyled-modal-description">{book.authors}</p>
-                <span>Editora: </span><p id="unstyled-modal-description">{book.publisher}</p>
+                { book.authors &&
+                  <><span>Autores: </span><p id="unstyled-modal-description">{book.authors}</p></>
+                }
+                { book.publisher &&
+                  <><span>Editora: </span><p id="unstyled-modal-description">{book.publisher}</p></>
+                }
               </SubInfoContainer>
               <SubInfoContainer>
-                <span>Gêneros: </span><p id="unstyled-modal-description">{book.categories}</p>
+                { book.categories &&
+                  <><span>Gêneros: </span><p id="unstyled-modal-description">{book.categories}</p></>
+                }
                 <span>Número de Páginas: </span><p id="unstyled-modal-description">{book.pageCount}</p>
               </SubInfoContainer>
             </StyledBox>
