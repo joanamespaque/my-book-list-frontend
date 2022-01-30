@@ -24,7 +24,6 @@ const StyledModal = styled(ModalUnstyled)`
 `;
 
 const StyledBox = styled(Box)`
-  min-width: 280px;
   max-height: 90vh;
   display: flex;
   flex-direction: row;
@@ -40,6 +39,16 @@ const StyledBox = styled(Box)`
       font-size: 18px;
       text-align: center;
     }
+  }
+  ${(props) =>
+    props.child ?
+    css`
+      min-width: 240px;
+    `
+    :
+    css`
+    min-width: 280px;
+    `
   }
 `;
 
@@ -76,8 +85,11 @@ const InfoContainer = styled.div`
     props.image &&
     css`
     @media(max-width: 1215px) {
-      width: 200px;
+      width: 230px;
       margin: 0 auto;
+    }
+    @media(max-width: 400px) {
+      width: 200px;
     }
     `
   }
@@ -168,7 +180,7 @@ const FavoriteModal = ({state, book, setOpen, open, handleFavorite, setHandleFav
       let authors = '';
       if(book.authors) book.authors.map((author) => authors += author + ' ')
       let categories = '';
-      if (book.cateogires) book.categories.map((category) =>  categories += category + ' ');
+      if (book.categories) book.categories.map((category) =>  categories += category + ' ');
       const data = {
         title: book.title,
         description: book.description,
@@ -181,8 +193,6 @@ const FavoriteModal = ({state, book, setOpen, open, handleFavorite, setHandleFav
         pageCount: book.pageCount,
         thumbnail: book.imageLinks.thumbnail
       }
-      console.log(data);
-      console.log(book);
       const { url, options } = BOOK_POST(data);
       await request(url, options);
       return window.location.reload();
@@ -191,8 +201,6 @@ const FavoriteModal = ({state, book, setOpen, open, handleFavorite, setHandleFav
 
     async function handleRemove () {
       const item = localStorage.getItem(book.book_id ? book.book_id : book.id);
-      console.log(book)
-      console.log(item)
       await fetchDeleteBook(item);
       return window.location.reload();
       ;
@@ -225,7 +233,7 @@ const FavoriteModal = ({state, book, setOpen, open, handleFavorite, setHandleFav
           >
           {favorite
           ? (
-            <StyledBox sx={{p:5, display:'flex', flexDirection: 'column', width: '24vw'}}>
+            <StyledBox sx={{p:5, display:'flex', flexDirection: 'column', width: '24vw'}} child>
                 <h2 id="child-modal-title">Remover dos favoritos?</h2>
                 <ButtonsDiv>
                   <ColorButton variant="contained" info="true" target="_blank" onClick={handleCloseChild} outlined="true">
@@ -276,9 +284,9 @@ const FavoriteModal = ({state, book, setOpen, open, handleFavorite, setHandleFav
             <ColorButton variant="contained" info="true" href={book.infoLink} target="_blank" endIcon={<Info size="25" />}>
               Saber Mais
             </ColorButton>
-            {favorite &&
+            { (favorite && book.book_id) &&
               <Note >
-                <span>Sua anotação: </span><p id="unstyled-modal-description">{book.favorite_description}</p>
+                <span>Sua anotação: </span><p id="unstyled-modal-description">{book.favorite_description ? book.favorite_description : "Você não fez anotações sobre esse livro."}</p>
               </Note>
             }
           </InfoContainer>

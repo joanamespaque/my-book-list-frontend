@@ -76,7 +76,6 @@ const Home = ({ filter }) => {
   }
 
   function filterBooks (value, books) {
-    console.log(books)
     return books.filter(({title}) => {
       return normalize(title).includes(normalize(value));
     })
