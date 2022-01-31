@@ -1,7 +1,6 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './Home';
-import Favorites from './Favorites';
 import styled from 'styled-components';
 import Theme from './Theme';
 import Header from './Components/Header';
@@ -26,7 +25,6 @@ function App() {
         <Container>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/favorites" element={<Favorites />} />
           </Routes>
         </Container>
       </BrowserRouter>
